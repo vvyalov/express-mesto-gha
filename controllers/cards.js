@@ -29,10 +29,11 @@ const deleteCard = (req, res) => {
   const { cardId } = req.params;
   Card.findByIdAndRemove(cardId)
     .then((card) => {
-      if (card) {
-        res.json(card);
+      if (!card) {
+        res.status(404).send({ message: 'Карточка с указанным _id не найдена' });
+        return;
       }
-      return res.status(404).send({ message: 'Карточка с указанным _id не найдена' });
+      res.status(404).send({ data: card });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -51,7 +52,7 @@ const likeCard = (req, res) => {
   )
     .then((card) => {
       if (card) {
-        res.json(card);
+        res.send(card);
       }
       return res.status(404).send({ message: 'Карточка с указанным _id не найдена' });
     })
