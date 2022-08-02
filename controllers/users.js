@@ -13,7 +13,7 @@ const getUsers = (req, res) => {
 };
 
 const getUser = (req, res) => {
-  User.findById(req.params.userid)
+  User.findById(req.params.userId)
     .then((user) => {
       if (user) {
         res.status(404).send({ message: 'Указанный _id не найден' });
@@ -62,7 +62,7 @@ const updateUser = (req, res) => {
 
 const updateAvatar = (req, res) => {
   const { avatar } = req.body;
-  User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
+  User.findByIdAndUpdate(req.user._id, { avatar }, { new: true })
     .then((newAvatar) => res.send(newAvatar))
     .catch((err) => {
       if (err.name === 'ValidationError') {
