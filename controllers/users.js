@@ -13,15 +13,17 @@ const getUsers = (req, res) => {
 };
 
 const getUser = (req, res) => {
-  const { userID } = req.params;
-  User.findById(userID)
+  User.findById(req.params.id)
     .then((user) => {
-      if (user) { res.send(user); }
-      return res.status(404).send({ message: 'Указанный _id не найден' });
+      if (!user) {
+        res.status(404).send({ message: 'Указанный _id не найден' });
+        return;
+      }
+      res.status(200).send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(400).send({ message: 'Некорректный _id пользователя' });
+        res.status(400).send({ message: 'Некорректные данные при создании пользователя' });
         return;
       }
       res.status(500).send({ message: 'Произошла ошибка' });
