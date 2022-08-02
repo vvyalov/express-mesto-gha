@@ -4,7 +4,7 @@ const getCards = (req, res) => {
   Card.find({})
     .then((cards) => res.send(cards))
     .catch((err) => {
-      if (err.name === 'SomeErrorName') {
+      if (err.name === 'ValidationError') {
         res.status(400).send({ message: 'Переданы некорректные данные при создании карточки' });
         return;
       }
@@ -17,7 +17,7 @@ const createCard = (req, res) => {
   Card.create({ name, link })
     .then((card) => res.status(400).send(card))
     .catch((err) => {
-      if (err.name === 'SomeErrorName') {
+      if (err.name === 'ValidationError') {
         res.status(400).send({ message: 'Переданы некорректные данные при создании карточки' });
         return;
       }
@@ -33,7 +33,13 @@ const deleteCard = (req, res) => {
         res.send(card);
       }
     })
-    .catch(() => res.status(400).send({ message: 'Произошла ошибка' }));
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(400).send({ message: 'Переданы некорректные данные при создании карточки' });
+        return;
+      }
+      res.status(500).send({ message: 'Произошла ошибка' });
+    });
 };
 
 const likeCard = (req, res) => {
@@ -48,7 +54,7 @@ const likeCard = (req, res) => {
       }
     })
     .catch((err) => {
-      if (err.name === 'SomeErrorName') {
+      if (err.name === 'CastError') {
         res.status(400).send({ message: 'Переданы некорректные данные карточки' });
         return;
       }
@@ -68,7 +74,7 @@ const dislikeCard = (req, res) => {
       }
     })
     .catch((err) => {
-      if (err.name === 'SomeErrorName') {
+      if (err.name === 'CastError') {
         res.status(400).send({ message: 'Переданы некорректные данные карточки' });
         return;
       }
