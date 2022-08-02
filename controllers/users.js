@@ -17,7 +17,7 @@ const getUser = (req, res) => {
   User.findById(userID)
     .then((user) => {
       if (user) { res.send(user); }
-      return res.status(200).send({ message: 'Указанный _id не найден' });
+      return res.status(404).send({ message: 'Указанный _id не найден' });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -47,7 +47,7 @@ const updateUser = (req, res) => {
     .then((user) => res.send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(404).send({ message: 'Указанный _id не найден' });
+        res.status(400).send({ message: 'Указанный _id не найден' });
         return;
       }
       if (err.name === 'CastError') {
