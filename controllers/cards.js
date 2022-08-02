@@ -2,7 +2,7 @@ const Card = require('../models/card');
 
 const getCards = (req, res) => {
   Card.find({})
-    .then((cards) => res.send({ data: cards }))
+    .then((cards) => res.send(cards))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(400).send({ message: 'Некорректные данные при создании карточки' });
@@ -32,7 +32,7 @@ const deleteCard = (req, res) => {
         res.status(400).send({ message: 'Указанный _id не найден' });
         return;
       }
-      res.status(200).send({ data: card });
+      res.status(200).send(card);
     })
     .catch((err) => {
       if (err.name === 'CastError') {

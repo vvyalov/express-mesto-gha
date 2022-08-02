@@ -2,7 +2,7 @@ const User = require('../models/user');
 
 const getUsers = (req, res) => {
   User.find({})
-    .then((users) => res.send({ data: users }))
+    .then((users) => res.send(users))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(400).send({ message: 'Некорректные данные при создании пользователя' });
@@ -19,7 +19,7 @@ const getUser = (req, res) => {
         res.status(404).send({ message: 'Указанный _id не найден' });
         return;
       }
-      res.status(200).send({ data: user });
+      res.status(200).send(user);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -62,7 +62,7 @@ const updateUser = (req, res) => {
 
 const updateAvatar = (req, res) => {
   const { avatar } = req.body;
-  User.findByIdAndUpdate(req.user._id, { avatar }, { new: true })
+  User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
     .then((newAvatar) => res.send(newAvatar))
     .catch((err) => {
       if (err.name === 'ValidationError') {
