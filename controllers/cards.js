@@ -5,7 +5,7 @@ const getCards = (req, res) => {
     .then((cards) => res.send(cards))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({ message: 'Переданы некорректные данные при создании карточки' });
+        res.status(400).send({ message: 'Некорректные данные при создании карточки' });
         return;
       }
       res.status(500).send({ message: 'Произошла ошибка' });
@@ -14,11 +14,11 @@ const getCards = (req, res) => {
 
 const createCard = (req, res) => {
   const { name, link } = req.body;
-  Card.create({ name, link })
-    .then((card) => res.status(400).send(card))
+  Card.create({ name, link, owner: req.user._id })
+    .then((card) => res.status(201).send(card))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({ message: 'Переданы некорректные данные при создании карточки' });
+        res.status(400).send({ message: 'Некорректные данные при создании карточки' });
         return;
       }
       res.status(500).send({ message: 'Произошла ошибка' });
@@ -32,10 +32,11 @@ const deleteCard = (req, res) => {
       if (card) {
         res.send(card);
       }
+      return res.status(200).send({ message: 'Указанный _id не найден' });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(400).send({ message: 'Переданы некорректные данные при создании карточки' });
+        res.status(400).send({ message: 'Некорректный _id' });
         return;
       }
       res.status(500).send({ message: 'Произошла ошибка' });
@@ -52,7 +53,7 @@ const likeCard = (req, res) => {
       if (card) {
         res.send(card);
       }
-      return res.status(200).send({ message: 'Указанный _id не найден' });
+      return res.status(404).send({ message: 'Указанный _id не найден' });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -73,7 +74,7 @@ const dislikeCard = (req, res) => {
       if (card) {
         res.send(card);
       }
-      res.status(400).send({ message: 'Некорректный _id' });
+      res.status(404).send({ message: 'Некорректный _id' });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
