@@ -30,7 +30,7 @@ const deleteCard = (req, res) => {
   Card.findByIdAndRemove(cardId)
     .then((card) => {
       if (card) {
-        res.send(card);
+        res.json(card);
       }
       return res.status(404).send({ message: 'Карточка с указанным _id не найдена' });
     })
@@ -51,7 +51,7 @@ const likeCard = (req, res) => {
   )
     .then((card) => {
       if (card) {
-        res.send(card);
+        res.json(card);
       }
       return res.status(404).send({ message: 'Карточка с указанным _id не найдена' });
     })
@@ -71,11 +71,10 @@ const dislikeCard = (req, res) => {
     { new: true },
   )
     .then((card) => {
-      if (!card) {
-        res.status(404).send({ message: 'Карточка с указанным _id не найдена' });
-      } else {
-        res.send({ message: 'Лайк удалён' });
+      if (card) {
+        res.json(card);
       }
+      return res.status(404).send({ message: 'Карточка с указанным _id не найдена' });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
