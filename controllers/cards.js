@@ -48,7 +48,6 @@ const likeCard = (req, res) => {
     req.params.cardId,
     { $addToSet: { likes: req.user._id } },
     { new: true },
-    res.status(200),
   )
     .then((card) => {
       if (card) {
@@ -70,7 +69,6 @@ const dislikeCard = (req, res) => {
     req.params.cardId,
     { $pull: { likes: req.user._id } },
     { new: true },
-    res.status(200),
   )
     .then((card) => {
       if (card) {
