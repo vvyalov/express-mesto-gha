@@ -16,7 +16,7 @@ const getUser = (req, res) => {
   const { userID } = req.params;
   User.findById(userID)
     .then((user) => {
-      if (user) res.send(user);
+      if (user) { res.send(user); }
     })
     .catch((err) => {
       if (err.name === 'CastError') {
