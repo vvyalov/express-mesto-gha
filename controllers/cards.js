@@ -5,12 +5,12 @@ const getCards = (req, res) => {
     .then((cards) => res.send(cards))
     .catch((err) => {
       if (err.name === 'SomeErrorName') {
-        res.status(400).send({ message: 'Переданы некорректные данные при создании карточки' })
-        return
+        res.status(400).send({ message: 'Переданы некорректные данные при создании карточки' });
+        return;
       }
-      res.status(500).send({ message: 'Произошла ошибка' })
-    })
-}
+      res.status(500).send({ message: 'Произошла ошибка' });
+    });
+};
 
 const createCard = (req, res) => {
   const { name, link } = req.body;
@@ -18,24 +18,23 @@ const createCard = (req, res) => {
     .then((card) => res.status(400).send(card))
     .catch((err) => {
       if (err.name === 'SomeErrorName') {
-        res.status(400).send({ message: 'Переданы некорректные данные при создании карточки' })
-        return
+        res.status(400).send({ message: 'Переданы некорректные данные при создании карточки' });
+        return;
       }
-      res.status(500).send({ message: 'Произошла ошибка' })
-    })
-}
-
+      res.status(500).send({ message: 'Произошла ошибка' });
+    });
+};
 
 const deleteCard = (req, res) => {
   const { cardId } = req.params;
   Card.findByIdAndRemove(cardId)
     .then((card) => {
       if (card) {
-        res.send(card)
+        res.send(card);
       }
     })
-    .catch(() => res.status(400).send({ message: 'Произошла ошибка' }))
-}
+    .catch(() => res.status(400).send({ message: 'Произошла ошибка' }));
+};
 
 const likeCard = (req, res) => {
   Card.findByIdAndUpdate(
@@ -45,18 +44,17 @@ const likeCard = (req, res) => {
   )
     .then((card) => {
       if (card) {
-        res.send(card)
+        res.send(card);
       }
     })
     .catch((err) => {
       if (err.name === 'SomeErrorName') {
-        res.status(400).send({ message: 'Переданы некорректные данные карточки' })
-        return
+        res.status(400).send({ message: 'Переданы некорректные данные карточки' });
+        return;
       }
-      res.status(500).send({ message: 'Произошла ошибка' })
-    })
-}
-
+      res.status(500).send({ message: 'Произошла ошибка' });
+    });
+};
 
 const dislikeCard = (req, res) => {
   Card.findByIdAndUpdate(
@@ -66,22 +64,22 @@ const dislikeCard = (req, res) => {
   )
     .then((card) => {
       if (card) {
-        res.send(card)
+        res.send(card);
       }
     })
     .catch((err) => {
       if (err.name === 'SomeErrorName') {
-        res.status(400).send({ message: 'Переданы некорректные данные карточки' })
-        return
+        res.status(400).send({ message: 'Переданы некорректные данные карточки' });
+        return;
       }
-      res.status(500).send({ message: 'Произошла ошибка' })
-    })
-}
+      res.status(500).send({ message: 'Произошла ошибка' });
+    });
+};
 
 module.exports = {
   getCards,
   createCard,
   deleteCard,
   likeCard,
-  dislikeCard
-}
+  dislikeCard,
+};
