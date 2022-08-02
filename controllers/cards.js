@@ -15,7 +15,7 @@ const getCards = (req, res) => {
 const createCard = (req, res) => {
   const { name, link } = req.body;
   Card.create({ name, link, owner: req.user._id })
-    .then((card) => res.status(201).send(card))
+    .then((card) => res.status(201).send({ data: card }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(400).send({ message: 'Некорректные данные при создании карточки' });
@@ -26,13 +26,13 @@ const createCard = (req, res) => {
 };
 
 const deleteCard = (req, res) => {
-  const { cardId } = req.params;
-  Card.findByIdAndRemove(cardId)
+  Card.findByIdAndRemove(req.params.id)
     .then((card) => {
-      if (card) {
-        res.send(card);
+      if (!card) {
+        res.status(400).send({ message: 'Указанный _id не найден' });
+        return;
       }
-      return res.status(200).send({ message: 'Указанный _id не найден' });
+      res.status(200).send({ data: card });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
