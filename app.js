@@ -9,12 +9,9 @@ const app = express();
 
 mongoose.connect('mongodb://localhost:27017/mestodb', {
   useNewUrlParser: true,
-  useCreateIndex: true,
-  useFindAndModify: false,
 });
 
 app.use(bodyParser.json());
-
 app.use((req, res, next) => {
   req.user = { _id: '62e90cd9d7cbfdc9705395ce' };
   next();
