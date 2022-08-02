@@ -20,7 +20,7 @@ const getUser = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'SomeErrorName') {
-        res.status(400).send({ message: 'Пользователь с указанным id не найден' });
+        res.status(404).send({ message: 'Пользователь с указанным id не найден' });
         return;
       }
       res.status(500).send({ message: 'Произошла ошибка' });
@@ -49,6 +49,10 @@ const updateUser = (req, res) => {
         res.status(400).send({ message: 'Переданы некорректные данные пользователя' });
         return;
       }
+      if (err.name === 'SomeErrorName') {
+        res.status(404).send({ message: 'Пользователь с указанным id не найден' });
+        return;
+      }
       res.status(500).send({ message: 'Произошла ошибка' });
     });
 };
@@ -59,6 +63,10 @@ const updateAvatar = (req, res) => {
     .catch((err) => {
       if (err.name === 'SomeErrorName') {
         res.status(400).send({ message: 'Переданы некорректные данные пользователя' });
+        return;
+      }
+      if (err.name === 'SomeErrorName') {
+        res.status(404).send({ message: 'Пользователь с указанным id не найден' });
         return;
       }
       res.status(500).send({ message: 'Произошла ошибка' });
