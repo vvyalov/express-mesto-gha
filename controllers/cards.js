@@ -67,14 +67,15 @@ const likeCard = (req, res) => {
 const dislikeCard = (req, res) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
-    { $pull: { likes: req.user._id } }, // убрать _id из массива
+    { $pull: { likes: req.user._id } },
     { new: true },
   )
     .then((card) => {
-      if (card) {
-        res.send(card);
+      if (!card) {
+        res.status(404).send({ message: 'Карточка с указанным _id не найдена' });
+      } else {
+        res.send({ message: 'Лайк удалён' });
       }
-      return res.status(404).send({ message: 'Карточка с указанным _id не найдена' });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
