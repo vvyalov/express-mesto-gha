@@ -17,11 +17,11 @@ const getUser = (req, res) => {
   User.findById(userID)
     .then((user) => {
       if (user) { res.send(user); }
-      return res.status(404).send({ message: 'Пользователь с указанным _id не найден' });
+      return res.status(200).send({ message: 'Пользователь с указанным _id не найден' });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(400).send({ message: 'Пользователь с указанным id не найден' });
+        res.status(400).send({ message: 'Пользователь с указанным _id не найден' });
         return;
       }
       res.status(500).send({ message: 'Произошла ошибка' });

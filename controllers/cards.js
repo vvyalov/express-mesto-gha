@@ -52,10 +52,11 @@ const likeCard = (req, res) => {
       if (card) {
         res.send(card);
       }
+      return res.status(200).send({ message: 'Указанный _id не найден' });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(400).send({ message: 'Переданы некорректные данные карточки' });
+        res.status(400).send({ message: 'Некорректный _id' });
         return;
       }
       res.status(500).send({ message: 'Произошла ошибка' });
@@ -72,10 +73,11 @@ const dislikeCard = (req, res) => {
       if (card) {
         res.send(card);
       }
+      res.status(400).send({ message: 'Некорректный _id' });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(400).send({ message: 'Переданы некорректные данные карточки' });
+        res.status(400).send({ message: 'Переданы некорректный _id' });
         return;
       }
       res.status(500).send({ message: 'Произошла ошибка' });
