@@ -20,9 +20,8 @@ const cardSchema = new mongoose.Schema({
     default: [],
   },
   createdAt: {
-    type: mongoose.Schema.Types.Date,
-    // eslint-disable-next-line no-undef
-    default: Data.now(),
+    type: Date,
+    default: ' Data.now()',
   },
 });
 
