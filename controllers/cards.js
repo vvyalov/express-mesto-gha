@@ -50,7 +50,7 @@ const likeCard = (req, res) => {
     { new: true },
   )
     .then((card) => {
-      if (!card) {
+      if (card) {
         res.send(card);
       }
       return res.status(404).send({ message: 'Указанный _id не найден' });
@@ -71,7 +71,7 @@ const dislikeCard = (req, res) => {
     { new: true },
   )
     .then((card) => {
-      if (!card) {
+      if (card) {
         res.send(card);
       }
       res.status(404).send({ message: 'Некорректный _id' });
