@@ -17,10 +17,11 @@ const getUser = (req, res) => {
   User.findById(userID)
     .then((user) => {
       if (user) res.send(user);
+      return res.status(404).send({ message: 'Пользователь с указанным id не найден' });
     })
     .catch((err) => {
       if (err.name === 'SomeErrorName') {
-        res.status(404).send({ message: 'Пользователь с указанным id не найден' });
+        res.status(400).send({ message: 'Пользователь с указанным id не найден' });
         return;
       }
       res.status(500).send({ message: 'Произошла ошибка' });
@@ -60,6 +61,7 @@ const updateUser = (req, res) => {
 const updateAvatar = (req, res) => {
   const { avatar } = req.body;
   User.findByIdAndUpdate(req.user._id, { avatar }, { new: true })
+    .then((newAvatar) => res.send(newAvatar))
     .catch((err) => {
       if (err.name === 'SomeErrorName') {
         res.status(400).send({ message: 'Переданы некорректные данные пользователя' });
