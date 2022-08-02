@@ -43,11 +43,11 @@ const createUser = (req, res) => {
 
 const updateUser = (req, res) => {
   const { name, about } = req.body;
-  User.findByIdAndUpdate(req.user._id, { name, about }, { new: true })
+  User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
     .then((user) => res.send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({ message: 'Указанный _id не найден' });
+        res.status(400).send({ message: 'Некорректные данные при создании пользователя' });
         return;
       }
       if (err.name === 'CastError') {
