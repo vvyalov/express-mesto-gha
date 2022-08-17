@@ -1,4 +1,4 @@
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const RequestError = require('../errors/request-error');
 const EmailError = require('../errors/email-error');
