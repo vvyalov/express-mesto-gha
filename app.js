@@ -52,6 +52,5 @@ app.use((req, res, next) => {
   next(new NotFoundError('Страница не найдена'));
 });
 app.use(errors());
-app.use(500);
 
 app.listen(PORT);
