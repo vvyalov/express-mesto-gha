@@ -38,24 +38,24 @@ const newUser = (req, res, next) => {
       User.create({
         name, about, avatar, email, password: hash,
       })
-        .then((data) => {
+        .then((user) => {
           res.status(200).send({
-            name: data.name,
-            about: data.about,
-            avatar: data.avatar,
-            email: data.email,
+            name: user.name,
+            about: user.about,
+            avatar: user.avatar,
+            email: user.email,
           });
+        })
+        .catch((err) => {
+          if (err.name === 'ValidationError') {
+            next(new RequestError('Данные заполнены неверно'));
+            return;
+          } if (err.code === 11000) {
+            next(new EmailError('Пользователь с таким адресом уже существует'));
+            return;
+          }
+          next(err);
         });
-    })
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        next(new RequestError('Данные заполнены неверно'));
-        return;
-      } if (err.code === 11000) {
-        next(new EmailError('Пользователь с таким адресом уже существует'));
-        return;
-      }
-      next(err);
     })
     .catch(next);
 };
