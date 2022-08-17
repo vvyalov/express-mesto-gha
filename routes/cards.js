@@ -1,8 +1,22 @@
 const router = require('express').Router();
+const { isObjectIdOrHexString } = require('mongoose');
 const { celebrate, Joi } = require('celebrate');
 const {
   getCards, newCard, deleteCard, likeCard, dislikeCard,
 } = require('../controllers/cards');
+
+const validate = (value) => {
+  if (isObjectIdOrHexString(value)) {
+    return value;
+  }
+  throw new Error('Некорректный _id карточки');
+};
+
+const validateId = {
+  params: Joi.object().keys({
+    cardId: Joi.string().custom(validate),
+  }),
+};
 
 router.get('/', getCards);
 
@@ -19,31 +33,19 @@ router.post(
 
 router.delete(
   '/:cardId',
-  celebrate({
-    params: Joi.object().keys({
-      id: Joi.string().required().hex().length(24),
-    }),
-  }),
+  celebrate(validateId),
   deleteCard,
 );
 
 router.put(
   '/:cardId/likes',
-  celebrate({
-    params: Joi.object().keys({
-      id: Joi.string().required().hex().length(24),
-    }),
-  }),
+  celebrate(validateId),
   likeCard,
 );
 
 router.delete(
   '/:cardId/likes',
-  celebrate({
-    params: Joi.object().keys({
-      id: Joi.string().required().hex().length(24),
-    }),
-  }),
+  celebrate(validateId),
   dislikeCard,
 );
 

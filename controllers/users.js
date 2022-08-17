@@ -106,11 +106,10 @@ const updateAvatar = (req, res, next) => {
 };
 
 const login = (req, res, next) => {
-  const jwtKey = '62e90cd9d7cbfdc9705395ce';
   const { email, password } = req.body;
   User.findUserByCredentials({ email, password })
     .then((user) => {
-      const token = jwt.sign({ _id: user._id }, jwtKey, { expiresIn: '7d' });
+      const token = jwt.sign({ _id: user._id }, '62e90cd9d7cbfdc9705395ce', { expiresIn: '7d' });
       res.cookie('jwt', token, { maxAge: 3600000 * 24 * 7, httpOnly: true }).send({ email: user.email });
     })
     .catch(next);
