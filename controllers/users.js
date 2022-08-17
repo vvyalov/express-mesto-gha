@@ -86,10 +86,12 @@ const updateUser = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        throw new RequestError('Данные заполнены неверно');
+        next(new RequestError('Данные заполнены неверно'));
+        return;
       }
       if (err.name === 'CastError') {
-        throw new NotFoundError('Указанный _id не найден');
+        next(new NotFoundError('Указанный _id не найден'));
+        return;
       }
       next(err);
     });
@@ -114,14 +116,16 @@ const updateAvatar = (req, res, next) => {
       if (!user) {
         throw new NotFoundError('Указанный _id не найден');
       }
-      res.send(user);
+      res.send({ avatar: user.avatar });
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        throw new RequestError('Данные заполнены неверно');
+        next(new RequestError('Данные заполнены неверно'));
+        return;
       }
       if (err.name === 'CastError') {
-        throw new NotFoundError('Указанный _id не найден');
+        next(new NotFoundError('Указанный _id не найден'));
+        return;
       }
       next(err);
     });

@@ -33,7 +33,7 @@ function deleteCard(req, res, next) {
       if (!card.owner.equals(req.user._id)) {
         throw new AccessError('Нет прав на удаление карточки');
       }
-      Card.findByIdAndRemove(cardId)
+      Card.findByIdAndRemove(card._id)
         .then(() => {
           res.send(card);
         })
@@ -58,7 +58,7 @@ const likeCard = (req, res, next) => {
       if (!card) {
         throw new NotFoundError('Указанный _id не найден');
       }
-      return res.send(card);
+      res.send(card);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -79,7 +79,7 @@ const dislikeCard = (req, res, next) => {
       if (!card) {
         throw new NotFoundError('Указанный _id не найден');
       }
-      return res.send('Указанный _id не найдена');
+      res.send('Указанный _id не найдена');
     })
     .catch((err) => {
       if (err.name === 'CastError') {

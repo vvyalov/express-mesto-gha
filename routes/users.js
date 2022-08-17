@@ -1,8 +1,16 @@
 const router = require('express').Router();
+const { isObjectIdOrHexString } = require('mongoose');
 const { celebrate, Joi } = require('celebrate');
 const {
   allUsers, getUser, updateUser, updateAvatar, getCurrentUser,
 } = require('../controllers/users');
+
+const validation = (value) => {
+  if (isObjectIdOrHexString(value)) {
+    return value;
+  }
+  throw new Error('Некорректный _id карточки');
+};
 
 router.get('/users', allUsers);
 router.get('users/me', getCurrentUser);
@@ -11,7 +19,7 @@ router.get(
   '/users/:userId',
   celebrate({
     params: Joi.object().keys({
-      userId: Joi.string().required().hex().length(24),
+      userId: Joi.string().custom(validation),
     }),
   }),
   getUser,
