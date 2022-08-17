@@ -14,6 +14,7 @@ const app = express();
 
 mongoose.connect('mongodb://localhost:27017/mestodb', {
   useNewUrlParser: true,
+  useUnifiedTopology: true,
 });
 
 app.use(cookieParser());
@@ -46,9 +47,11 @@ app.post(
 
 app.use('/users', auth, UserRouter);
 app.use('/cards', auth, CardRouter);
+
 app.use((req, res, next) => {
   next(new NotFoundError('Страница не найдена'));
 });
 app.use(errors());
+app.use(500);
 
 app.listen(PORT);

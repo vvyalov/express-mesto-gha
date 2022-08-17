@@ -5,9 +5,18 @@ const EmailError = require('../errors/email-error');
 const NotFoundError = require('../errors/not-found-error');
 const User = require('../models/user');
 
+const jwtKey = '62e90cd9d7cbfdc9705395ce';
+
 function allUsers(req, res, next) {
   User.find({})
-    .then((users) => res.send(users))
+    .then((users) => { res.status(200).send(users); })
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        next(new NotFoundError('Указанный _id не найден'));
+        return;
+      }
+      next(err);
+    })
     .catch(next);
 }
 
@@ -61,7 +70,6 @@ const newUser = (req, res, next) => {
 };
 
 const login = (req, res, next) => {
-  const jwtKey = '62e90cd9d7cbfdc9705395ce';
   const { email, password } = req.body;
   User.findUserByCredentials({ email, password })
     .then((user) => {
