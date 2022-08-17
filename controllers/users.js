@@ -50,7 +50,7 @@ const newUser = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         throw new RequestError('Данные заполнены неверно');
-      } else if (err.code === 11000) {
+      } if (err.code === 11000) {
         throw new EmailError('Пользователь с таким адресом уже существует');
       }
       next(err);
