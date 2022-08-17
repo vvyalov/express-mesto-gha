@@ -9,14 +9,7 @@ const jwtKey = '62e90cd9d7cbfdc9705395ce';
 
 function allUsers(req, res, next) {
   User.find({})
-    .then((users) => { res.status(200).send(users); })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        next(new NotFoundError('Указанный _id не найден'));
-        return;
-      }
-      next(err);
-    })
+    .then((users) => res.send(users))
     .catch(next);
 }
 
