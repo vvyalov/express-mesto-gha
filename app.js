@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
 const express = require('express');
-const bodyParser = require('body-parser');
+// const bodyParser = require('body-parser');
 const { errors, celebrate, Joi } = require('celebrate');
-const cookieParser = require('cookie-parser');
+// const cookieParser = require('cookie-parser');
 const UserRouter = require('./routes/users');
 const CardRouter = require('./routes/cards');
 const { newUser, login } = require('./controllers/users');
@@ -13,8 +13,9 @@ const app = express();
 
 mongoose.connect('mongodb://localhost:27017/mestodb', {
   useNewUrlParser: true,
-  useUnifiedTopology: true,
 });
+
+app.use(express.json());
 
 app.post(
   '/signin',
@@ -41,8 +42,6 @@ app.post(
   newUser,
 );
 
-app.use(cookieParser());
-app.use(bodyParser.json());
 app.use('/', auth, UserRouter);
 app.use('/', auth, CardRouter);
 app.use((err, req, res, next) => {
