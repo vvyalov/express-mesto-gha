@@ -11,12 +11,11 @@ const getCards = (req, res, next) => {
 
 const newCard = (req, res, next) => {
   const { name, link } = req.body;
-  const owner = req.user._id;
-  Card.create({ name, link, owner })
-    .then((data) => res.status(200).send(data))
+  Card.create({ name, link, owner: req.user._id })
+    .then((card) => res.status(200).send(card))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        next(new RequestError('Некорректные данные при создании карточки'));
+        next(new RequestError('Переданы некорректные данные при создании карточки'));
         return;
       }
       next(err);
@@ -28,10 +27,10 @@ function deleteCard(req, res, next) {
   Card.findById(cardId)
     .then((card) => {
       if (!card) {
-        throw new NotFoundError('Указанный _id не найден');
+        throw new NotFoundError('Карточка с указанным _id не найдена');
       }
       if (!card.owner.equals(req.user._id)) {
-        throw new AccessError('Нет прав на удаление карточки');
+        throw new AccessError('У текущего пользователя нет прав на удаление данной карточки');
       }
       Card.findByIdAndRemove(card._id)
         .then(() => {
@@ -41,7 +40,7 @@ function deleteCard(req, res, next) {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new RequestError('Некорректный _id карточки'));
+        next(new RequestError('Передан некорректный _id карточки'));
         return;
       }
       next(err);
@@ -51,18 +50,18 @@ function deleteCard(req, res, next) {
 const likeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
-    { $addToSet: { likes: req.user._id } },
+    { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
     { new: true },
   )
     .then((card) => {
       if (!card) {
-        throw new NotFoundError('Указанный _id не найден');
+        throw new NotFoundError('Карточка с указанным _id не найдена');
       }
       res.send(card);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new RequestError('Некорректный _id карточки'));
+        next(new RequestError('Передан некорректный _id карточки'));
         return;
       }
       next(err);
@@ -77,13 +76,13 @@ const dislikeCard = (req, res, next) => {
   )
     .then((card) => {
       if (!card) {
-        throw new NotFoundError('Указанный _id не найден');
+        throw new NotFoundError('Карточка с указанным _id не найдена');
       }
-      res.send('Указанный _id не найдена');
+      res.send(card);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new RequestError('Некорректный _id карточки'));
+        next(new RequestError('Передан некорректный _id карточки'));
         return;
       }
       next(err);
