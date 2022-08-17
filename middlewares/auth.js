@@ -5,7 +5,8 @@ module.exports = (req, res, next) => {
   const jwtKey = '62e90cd9d7cbfdc9705395ce';
   const auth = req.cookies;
   if (!auth) {
-    throw new AuthError('Необходимо авторизоваться');
+    next(new AuthError('Необходимо авторизоваться'));
+    return;
   }
 
   const token = auth.jwt;
@@ -14,7 +15,8 @@ module.exports = (req, res, next) => {
   try {
     payload = jwt.verify(token, jwtKey);
   } catch (err) {
-    throw new AuthError('Необходимо авторизоваться');
+    next(new AuthError('Необходимо авторизоваться'));
+    return;
   }
 
   req.user = payload;
