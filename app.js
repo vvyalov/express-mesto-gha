@@ -41,8 +41,7 @@ app.post(
   newUser,
 );
 
-app.use(auth);
-app.use(cookieParser);
+app.use(cookieParser());
 app.use(bodyParser.json());
 app.use('/', auth, UserRouter);
 app.use('/', auth, CardRouter);
