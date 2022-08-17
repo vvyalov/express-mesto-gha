@@ -1,6 +1,6 @@
 class AccessError extends Error {
-  constructor(data) {
-    super(data);
+  constructor(message) {
+    super(message);
     this.statusCode = 401;
   }
 }
