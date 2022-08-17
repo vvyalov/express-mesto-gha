@@ -9,11 +9,12 @@ const validationId = (value) => {
   if (isObjectIdOrHexString(value)) {
     return value;
   }
-  throw new Error('Передан некорректный _id пользователя');
+  throw new Error('Некорректный _id пользователя');
 };
 
 router.get('/', allUsers);
 router.get('/me', getCurrentUser);
+
 router.get(
   '/:userId',
   celebrate({
@@ -23,6 +24,7 @@ router.get(
   }),
   getUser,
 );
+
 router.patch(
   '/me',
   celebrate({
@@ -33,6 +35,7 @@ router.patch(
   }),
   updateUser,
 );
+
 router.patch(
   '/me/avatar',
   celebrate({
@@ -41,6 +44,6 @@ router.patch(
     }),
   }),
   updateAvatar,
-); // обновляет аватар
+);
 
 module.exports = router;

@@ -9,16 +9,11 @@ const validationId = (value) => {
   if (isObjectIdOrHexString(value)) {
     return value;
   }
-  throw new Error('Передан некорректный _id карточки');
+  throw new Error('Некорректный _id карточки');
 };
 
-const joiValidationId = {
-  params: Joi.object().keys({
-    cardId: Joi.string().custom(validationId),
-  }),
-};
+router.get('/', getCards);
 
-router.get('/', getCards); // возвращает все карточки
 router.post(
   '/',
   celebrate({
@@ -28,21 +23,36 @@ router.post(
     }),
   }),
   newCard,
-); // создаёт карточку
+);
+
 router.delete(
   '/:cardId',
-  celebrate(joiValidationId),
+  celebrate({
+    body: Joi.object().keys({
+      cardId: Joi.string().custom(validationId),
+    }),
+  }),
   deleteCard,
-); // удаляет карточку
+);
+
 router.put(
   '/:cardId/likes',
-  celebrate(joiValidationId),
+  celebrate({
+    body: Joi.object().keys({
+      cardId: Joi.string().custom(validationId),
+    }),
+  }),
   likeCard,
-); // поставить лайк карточке
+);
+
 router.delete(
   '/:cardId/likes',
-  celebrate(joiValidationId),
+  celebrate({
+    body: Joi.object().keys({
+      cardId: Joi.string().custom(validationId),
+    }),
+  }),
   dislikeCard,
-); // убрать лайк с карточки
+);
 
 module.exports = router;

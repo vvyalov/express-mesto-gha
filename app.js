@@ -8,7 +8,6 @@ const CardRouter = require('./routes/cards');
 const { newUser, login } = require('./controllers/users');
 const auth = require('./middlewares/auth');
 const NotFoundError = require('./errors/not-found-error');
-const ServerError = require('./errors/server-error');
 
 const { PORT = 3000 } = process.env;
 const app = express();
@@ -55,6 +54,10 @@ app.use((req, res, next) => {
 });
 
 app.use(errors());
-app.use(ServerError);
+app.use((err, req, res, next) => {
+  const { statusCode = 500, message } = err;
+  res.status(statusCode).send({ message: statusCode === 500 ? 'На сервере произошла ошибка' : message });
+  next();
+});
 
 app.listen(PORT);
