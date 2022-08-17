@@ -18,13 +18,13 @@ const getUser = (req, res, next) => {
   User.findById(userId)
     .then((user) => {
       if (!user) {
-        throw new NotFoundError('Указанный _id не найден');
+        throw new NotFoundError('Пользователь с указанным _id не найден');
       }
       res.send(user);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new NotFoundError('Указанный _id не найден'));
+        next(new NotFoundError('Пользователь с указанным _id не найден'));
         return;
       }
       next(err);
@@ -41,7 +41,7 @@ const newUser = (req, res, next) => {
         name, about, avatar, email, password: hash,
       })
         .then((user) => {
-          res.status(200).send({
+          res.status(201).send({
             name: user.name,
             about: user.about,
             avatar: user.avatar,
@@ -50,10 +50,11 @@ const newUser = (req, res, next) => {
         })
         .catch((err) => {
           if (err.name === 'ValidationError') {
-            next(new RequestError('Данные заполнены неверно'));
+            next(new RequestError('Данные заполнены с ошибкой или не переданы'));
             return;
-          } if (err.code === 11000) {
-            next(new EmailError('Пользователь с таким адресом уже существует'));
+          }
+          if (err.code === 11000) {
+            next(new EmailError('Пользователь с таким email уже существует'));
             return;
           }
           next(err);
@@ -81,17 +82,17 @@ const updateUser = (req, res, next) => {
   User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
-        throw new NotFoundError('Указанный _id не найден');
+        throw new NotFoundError('Пользователь с указанным _id не найден');
       }
       res.send(user);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        next(new RequestError('Данные заполнены неверно'));
+        next(new RequestError('Переданы некорректные данные при обновлении профиля'));
         return;
       }
       if (err.name === 'CastError') {
-        next(new NotFoundError('Указанный _id не найден'));
+        next(new NotFoundError('Пользователь с указанным _id не найден'));
         return;
       }
       next(err);
@@ -99,11 +100,11 @@ const updateUser = (req, res, next) => {
 };
 
 const getCurrentUser = (req, res, next) => {
-  const userId = req.user._id;
-  User.findById(userId)
+  const userCurrentId = req.user._id;
+  User.findById(userCurrentId)
     .then((user) => {
       if (!user) {
-        throw new NotFoundError('Указанный _id не найден');
+        throw new NotFoundError('Пользователь с указанным _id не найден');
       }
       res.send(user);
     })
@@ -115,17 +116,17 @@ const updateAvatar = (req, res, next) => {
   User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
-        throw new NotFoundError('Указанный _id не найден');
+        throw new NotFoundError('Пользователь с указанным _id не найден');
       }
       res.send({ avatar: user.avatar });
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        next(new RequestError('Данные заполнены неверно'));
+        next(new RequestError('Переданы некорректные данные при обновлении аватара'));
         return;
       }
       if (err.name === 'CastError') {
-        next(new NotFoundError('Указанный _id не найден'));
+        next(new NotFoundError('Пользователь с указанным _id не найден'));
         return;
       }
       next(err);

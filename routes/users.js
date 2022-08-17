@@ -5,28 +5,26 @@ const {
   allUsers, getUser, updateUser, updateAvatar, getCurrentUser,
 } = require('../controllers/users');
 
-const validation = (value) => {
+const validationId = (value) => {
   if (isObjectIdOrHexString(value)) {
     return value;
   }
-  throw new Error('Некорректный _id карточки');
+  throw new Error('Передан некорректный _id пользователя');
 };
 
-router.get('/users', allUsers);
-router.get('users/me', getCurrentUser);
-
+router.get('/', allUsers); // возвращает всех пользователей
+router.get('/me', getCurrentUser); // возвращает текущего пользователя
 router.get(
-  '/users/:userId',
+  '/:userId',
   celebrate({
     params: Joi.object().keys({
-      userId: Joi.string().custom(validation),
+      userId: Joi.string().custom(validationId),
     }),
   }),
   getUser,
-);
-
+); // возвращает пользователя по _id
 router.patch(
-  '/users/me',
+  '/me',
   celebrate({
     body: Joi.object().keys({
       name: Joi.string().min(2).max(30),
@@ -34,15 +32,15 @@ router.patch(
     }),
   }),
   updateUser,
-);
+); // обновляет профиль
 router.patch(
-  '/users/me/avatar',
+  '/me/avatar',
   celebrate({
     body: Joi.object().keys({
       avatar: Joi.string().pattern(/^(https?:\/\/)(www\.)?([\w\d\-.$])+[a-z]{2,10}\/?(([a-z\d\W_-]{2,})*([#]$)?)?/),
     }),
   }),
   updateAvatar,
-);
+); // обновляет аватар
 
 module.exports = router;
