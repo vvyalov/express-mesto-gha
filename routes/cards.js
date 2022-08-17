@@ -5,11 +5,17 @@ const {
   getCards, newCard, deleteCard, likeCard, dislikeCard,
 } = require('../controllers/cards');
 
-const validationId = (value) => {
+const validation = (value) => {
   if (isObjectIdOrHexString(value)) {
     return value;
   }
   throw new Error('Некорректный _id карточки');
+};
+
+const validationId = {
+  params: Joi.object().keys({
+    cardId: Joi.string().custom(validation),
+  }),
 };
 
 router.get('/', getCards);
@@ -27,31 +33,19 @@ router.post(
 
 router.delete(
   '/:cardId',
-  celebrate({
-    body: Joi.object().keys({
-      cardId: Joi.string().custom(validationId),
-    }),
-  }),
+  celebrate(validationId),
   deleteCard,
 );
 
 router.put(
   '/:cardId/likes',
-  celebrate({
-    body: Joi.object().keys({
-      cardId: Joi.string().custom(validationId),
-    }),
-  }),
+  celebrate(validationId),
   likeCard,
 );
 
 router.delete(
   '/:cardId/likes',
-  celebrate({
-    body: Joi.object().keys({
-      cardId: Joi.string().custom(validationId),
-    }),
-  }),
+  celebrate(validationId),
   dislikeCard,
 );
 
