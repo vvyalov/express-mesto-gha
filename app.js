@@ -2,15 +2,18 @@ const mongoose = require('mongoose');
 const express = require('express');
 const bodyParser = require('body-parser');
 const { errors, celebrate, Joi } = require('celebrate');
+const cookieParser = require('cookie-parser');
 const UserRouter = require('./routes/users');
 const CardRouter = require('./routes/cards');
 const { newUser, login } = require('./controllers/users');
+const auth = require('./middlewares/auth');
 
 const { PORT = 3000 } = process.env;
 const app = express();
 
 mongoose.connect('mongodb://localhost:27017/mestodb', {
   useNewUrlParser: true,
+  useUnifiedTopology: true,
 });
 
 app.post(
@@ -38,11 +41,15 @@ app.post(
   newUser,
 );
 
+app.use(auth);
+app.use(cookieParser);
 app.use(bodyParser.json());
-app.use('/', UserRouter);
-app.use('/', CardRouter);
-app.use((req, res) => {
-  res.status(404).send({ message: 'Страница не найдена' });
+app.use('/', auth, UserRouter);
+app.use('/', auth, CardRouter);
+app.use((err, req, res, next) => {
+  const { status = 500, message } = err;
+  res.status(status).send({ message: status === 500 ? 'Произошла ошибка' : message });
+  next();
 });
 app.use(errors());
 
