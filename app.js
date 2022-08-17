@@ -8,6 +8,7 @@ const CardRouter = require('./routes/cards');
 const { newUser, login } = require('./controllers/users');
 const auth = require('./middlewares/auth');
 const NotFoundError = require('./errors/not-found-error');
+const ServerError = require('./errors/server-error');
 
 const { PORT = 3000 } = process.env;
 const app = express();
@@ -44,6 +45,7 @@ app.post(
   }),
   newUser,
 );
+
 app.use(auth);
 app.use('/users', UserRouter);
 app.use('/cards', CardRouter);
@@ -53,5 +55,6 @@ app.use((req, res, next) => {
 });
 
 app.use(errors());
+app.use(ServerError);
 
 app.listen(PORT);
