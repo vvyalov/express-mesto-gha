@@ -12,8 +12,8 @@ const validationId = (value) => {
   throw new Error('Передан некорректный _id пользователя');
 };
 
-router.get('/', allUsers); // возвращает всех пользователей
-router.get('/me', getCurrentUser); // возвращает текущего пользователя
+router.get('/', allUsers);
+router.get('/me', getCurrentUser);
 router.get(
   '/:userId',
   celebrate({
@@ -22,7 +22,7 @@ router.get(
     }),
   }),
   getUser,
-); // возвращает пользователя по _id
+);
 router.patch(
   '/me',
   celebrate({
@@ -32,7 +32,7 @@ router.patch(
     }),
   }),
   updateUser,
-); // обновляет профиль
+);
 router.patch(
   '/me/avatar',
   celebrate({
