@@ -31,32 +31,27 @@ const getUser = (req, res, next) => {
 
 const newUser = (req, res, next) => {
   const {
-    name, about, avatar, email, password,
+    name, about, avatar, email,
   } = req.body;
-  bcrypt.hash(password, 10)
-    .then((hash) => {
-      User.create({
-        name, about, avatar, email, password: hash,
-      })
-        .then((user) => {
-          res.status(201).send({
-            name: user.name,
-            about: user.about,
-            avatar: user.avatar,
-            email: user.email,
-          });
-        })
-        .catch((err) => {
-          if (err.name === 'ValidationError') {
-            next(new RequestError('Данные заполнены с ошибкой'));
-            return;
-          }
-          if (err.code === 11000) {
-            next(new EmailError('Пользователь с таким email уже существует'));
-            return;
-          }
-          next(err);
-        });
+  bcrypt.hash(req.body.password, 10)
+    .then((hash) => User.create({
+      name, about, avatar, email, password: hash,
+    }))
+    .then((user) => {
+      res.status(201).send({
+        name: user.name,
+        about: user.about,
+        avatar: user.avatar,
+        email: user.email,
+      });
+    })
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        throw new RequestError('Данные заполнены с ошибкой');
+      } else if (err.code === 11000) {
+        throw new EmailError('Пользователь с таким email уже существует');
+      }
+      next(err);
     })
     .catch(next);
 };
