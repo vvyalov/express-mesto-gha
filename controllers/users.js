@@ -33,7 +33,13 @@ const newUser = (req, res, next) => {
   const {
     name, about, avatar, email,
   } = req.body;
-  bcrypt.hash(req.body.password, 10)
+  User.findOne({ email })
+    .then((user) => {
+      if (user) {
+        return res.send(user);
+      }
+      return bcrypt.hash(req.body.password, 10);
+    })
     .then((hash) => User.create({
       name, about, avatar, email, password: hash,
     }))
