@@ -2,7 +2,6 @@ const bcrypt = require('bcryptjs');
 const mongoose = require('mongoose');
 const validator = require('validator');
 const AuthError = require('../errors/auth-error');
-const EmailError = require('../errors/email-error');
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -30,8 +29,13 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
     unique: true,
-    validate: validator.isEmail,
+    validate: {
+      validator(v) {
+        return validator.isEmail(v);
+      },
+    },
   },
+
   password: {
     type: String,
     required: true,
@@ -39,12 +43,11 @@ const userSchema = new mongoose.Schema({
   },
 });
 
-/* eslint-disable */
-userSchema.statics.findUserByCredentials = function ({ email, password }) {
+userSchema.statics.findUserByCredentials = function func(email, password) {
   return this.findOne({ email }).select('+password')
     .then((user) => {
       if (!user) {
-        throw new EmailError('Неправильные данные');
+        throw new AuthError('Неправильные данные');
       }
 
       return bcrypt.compare(password, user.password)

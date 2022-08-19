@@ -33,25 +33,36 @@ const newUser = (req, res, next) => {
   const {
     name, about, avatar, email,
   } = req.body;
-  bcrypt.hash(req.body.password, 10)
-    .then((hash) => User.create({
-      name, about, avatar, email, password: hash,
-    }))
+  User.findOne({ email })
     .then((user) => {
-      res.status(201).send({
-        name: user.name,
-        about: user.about,
-        avatar: user.avatar,
-        email: user.email,
-      });
-    })
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        throw new RequestError('Данные заполнены с ошибкой');
-      } else if (err.code === 11000) {
-        throw new EmailError('Пользователь с таким email уже существует');
+      if (user) {
+        return res.send(user);
       }
-      next(err);
+      return bcrypt.hash(req.body.password, 10);
+    })
+    .then((hash) => {
+      User.create({
+        name, about, avatar, email, password: hash,
+      })
+        .then((user) => {
+          res.status(201).send({
+            name: user.name,
+            about: user.about,
+            avatar: user.avatar,
+            email: user.email,
+          });
+        })
+        .catch((err) => {
+          if (err.name === 'ValidationError') {
+            next(new RequestError('Данные заполнены с ошибкой'));
+            return;
+          }
+          if (err.code === 11000) {
+            next(new EmailError('Пользователь с таким email уже существует'));
+            return;
+          }
+          next(err);
+        });
     })
     .catch(next);
 };
@@ -102,7 +113,7 @@ const updateAvatar = (req, res, next) => {
 
 const login = (req, res, next) => {
   const { email, password } = req.body;
-  User.findUserByCredentials({ email, password })
+  return User.findUserByCredentials({ email, password })
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, '62e90cd9d7cbfdc9705395ce', { expiresIn: '7d' });
       res.cookie('jwt', token, { maxAge: 3600000 * 24 * 7, httpOnly: true }).send({ email: user.email });
