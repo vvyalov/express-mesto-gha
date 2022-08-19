@@ -36,7 +36,7 @@ const newUser = (req, res, next) => {
   User.findOne({ email })
     .then((user) => {
       if (user) {
-        return res.send(user);
+        return next(new EmailError('Пользователь с таким email уже существует'));
       }
       return bcrypt.hash(req.body.password, 10);
     })
