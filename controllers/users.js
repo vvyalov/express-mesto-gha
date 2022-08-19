@@ -47,9 +47,12 @@ const newUser = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        throw new RequestError('Данные заполнены с ошибкой');
-      } else if (err.code === 11000) {
-        throw new EmailError('Пользователь с таким email уже существует');
+        next(new RequestError('Данные заполнены с ошибкой'));
+        return;
+      }
+      if (err.code === 11000) {
+        next(new EmailError('Пользователь с таким email уже существует'));
+        return;
       }
       next(err);
     })
